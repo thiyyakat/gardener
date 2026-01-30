@@ -723,8 +723,9 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/texttheater/golang-levenshtein v1.0.1 h1:+cRNoVrfiwufQPhoMzB6N0Yf/Mqajr6t1lOv8GyGE2U=
 github.com/texttheater/golang-levenshtein v1.0.1/go.mod h1:PYAKrbF5sAiq9wd+H82hs7gNaen0CplQ9uvm6+enD/8=
-github.com/thiyyakat/machine-controller-manager v0.0.0-20260203063942-6636d8618193 h1:kKy3kOYRa1LfP3w+eVlY+3qaKG8W3kS/inLGi7eZA34=
-github.com/thiyyakat/machine-controller-manager v0.0.0-20260203063942-6636d8618193/go.mod h1:8eE1qLztrWIbOM71mHSQGaC6Q+pl5lvOyN08qP39D7o=
+github.com/thiyyakat/machine-controller-manager v0.0.0-20260226092727-38ff3d102053 h1:jzTW0LMovMGxbYCVK/kOsMXgs5muKIdH0iWHmmKNfAA=
+github.com/thiyyakat/machine-controller-manager v0.0.0-20260226092727-38ff3d102053/go.mod h1:8eE1qLztrWIbOM71mHSQGaC6Q+pl5lvOyN08qP39D7o=
+github.com/thiyyakat/machine-controller-manager v0.0.0-20260302060508-6c852d6fb1c9/go.mod h1:8eE1qLztrWIbOM71mHSQGaC6Q+pl5lvOyN08qP39D7o=
 github.com/tidwall/gjson v1.18.0 h1:FIDeeyB800efLX89e5a8Y0BNH+LOngJyGrIWxG2FKQY=
 github.com/tidwall/gjson v1.18.0/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=

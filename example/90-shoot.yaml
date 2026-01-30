@@ -58,6 +58,7 @@ spec:
         type: gp2
         size: 20Gi
     #   encrypted: true
+    # autoPreserveFailedMachineMax:1
     # dataVolumes:
     # - name: kubelet-dir
     #   type: gp2
@@ -143,6 +144,7 @@ spec:
     #   maxEvictRetries: 10
     #   inPlaceUpdateTimeout: 20m (only relevant for in-place update strategy)
     #   disableHealthTimeout: true (only relevant for in-place update strategy)
+    #   machinePreserveTimeout: 72h (only relevant for preservation of machines)
     #   nodeConditions:
     #   - ReadonlyFilesystem
     #   - KernelDeadlock

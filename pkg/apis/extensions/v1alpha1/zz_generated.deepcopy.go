@@ -2135,6 +2135,11 @@ func (in *WorkerPool) DeepCopyInto(out *WorkerPool) {
 		*out = new(v1beta1.MachineUpdateStrategy)
 		**out = **in
 	}
+	if in.AutoPreserveFailedMachineMax != nil {
+		in, out := &in.AutoPreserveFailedMachineMax, &out.AutoPreserveFailedMachineMax
+		*out = new(int32)
+		**out = **in
+	}
 	return
 }
 

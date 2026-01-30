@@ -2047,6 +2047,9 @@ func ValidateWorker(worker core.Worker, kubernetes core.Kubernetes, shootNamespa
 	allErrs = append(allErrs, ValidatePositiveIntOrPercent(worker.MaxSurge, fldPath.Child("maxSurge"))...)
 	allErrs = append(allErrs, ValidatePositiveIntOrPercent(worker.MaxUnavailable, fldPath.Child("maxUnavailable"))...)
 	allErrs = append(allErrs, IsNotMoreThan100Percent(worker.MaxUnavailable, fldPath.Child("maxUnavailable"))...)
+	if worker.AutoPreserveFailedMachineMax != nil && *worker.AutoPreserveFailedMachineMax < 0 {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("autoPreserveFailedMachineMax"), *worker.AutoPreserveFailedMachineMax, "cannot be less than 0"))
+	}
 
 	if ptr.Deref(worker.UpdateStrategy, "") == core.ManualInPlaceUpdate {
 		if worker.MaxSurge != nil {
@@ -2224,6 +2227,9 @@ func ValidateMachineControllerManagerSettingsOptions(mcmOptions *core.MachineCon
 		if ptr.Deref(mcmOptions.DisableHealthTimeout, false) {
 			allErrs = append(allErrs, field.Forbidden(fldPath.Child("disableHealthTimeout"), "can only be set to true when the update strategy is `AutoInPlaceUpdate` or `ManualInPlaceUpdate`"))
 		}
+	}
+	if mcmOptions.MachinePreserveTimeout != nil {
+		allErrs = append(allErrs, ValidatePositiveDuration(mcmOptions.MachinePreserveTimeout, fldPath.Child("machinePreserveTimeout"))...)
 	}
 
 	return allErrs

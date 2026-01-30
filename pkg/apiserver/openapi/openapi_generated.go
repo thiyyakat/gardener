@@ -5734,6 +5734,12 @@ func schema_pkg_apis_core_v1beta1_MachineControllerManagerSettings(ref common.Re
 							Format:      "",
 						},
 					},
+					"machinePreserveTimeout": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MachinePreserveTimeout is the timeout after which the machine preservation is stopped",
+							Ref:         ref("k8s.io/apimachinery/pkg/apis/meta/v1.Duration"),
+						},
+					},
 				},
 			},
 		},
@@ -10734,6 +10740,13 @@ func schema_pkg_apis_core_v1beta1_Worker(ref common.ReferenceCallback) common.Op
 						SchemaProps: spec.SchemaProps{
 							Description: "ControlPlane specifies that the shoot cluster control plane components should be running in this worker pool. This is only relevant for self-hosted shoot clusters.",
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/core/v1beta1.WorkerControlPlane"),
+						},
+					},
+					"autoPreserveFailedMachineMax": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AutoPreserveFailedMachineMax is the maximum number of machines that will be auto-preserved in the worker pool. This value is distributed across zones like Minimum and Maximum.",
+							Type:        []string{"integer"},
+							Format:      "int32",
 						},
 					},
 				},

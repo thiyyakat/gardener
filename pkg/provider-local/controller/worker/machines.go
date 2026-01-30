@@ -192,6 +192,7 @@ func (w *workerDelegate) generateMachineConfig(ctx context.Context) error {
 			Taints:                       pool.Taints,
 			MachineConfiguration:         genericworkeractuator.ReadMachineConfiguration(pool),
 			ClusterAutoscalerAnnotations: extensionsv1alpha1helper.GetMachineDeploymentClusterAutoscalerAnnotations(pool.ClusterAutoscaler),
+			AutoPreserveFailedMachineMax: *pool.AutoPreserveFailedMachineMax,
 		})
 	}
 

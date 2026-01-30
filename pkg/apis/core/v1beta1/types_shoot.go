@@ -1755,6 +1755,9 @@ type Worker struct {
 	// This is only relevant for self-hosted shoot clusters.
 	// +optional
 	ControlPlane *WorkerControlPlane `json:"controlPlane,omitempty" protobuf:"bytes,24,opt,name=controlPlane"`
+	// AutoPreserveFailedMachineMax is the maximum number of machines that will be auto-preserved in the worker pool. This value is distributed across zones like Minimum and Maximum.
+	// +optional
+	AutoPreserveFailedMachineMax *int32 `json:"autoPreserveFailedMachineMax,omitempty" protobuf:"bytes,25,opt,name=autoPreserveFailedMachineMax"`
 }
 
 // WorkerControlPlane specifies that the shoot cluster control plane components should be running in this worker pool.
@@ -1823,6 +1826,9 @@ type MachineControllerManagerSettings struct {
 	// This is intended to be used only for in-place updates.
 	// +optional
 	DisableHealthTimeout *bool `json:"disableHealthTimeout,omitempty" protobuf:"varint,7,opt,name=disableHealthTimeout"`
+	// MachinePreserveTimeout is the timeout after which the machine preservation is stopped
+	// +optional
+	MachinePreserveTimeout *metav1.Duration `json:"machinePreserveTimeout,omitempty" protobuf:"bytes,8,opt,name=machinePreserveTimeout"`
 }
 
 // WorkerSystemComponents contains configuration for system components related to this worker pool

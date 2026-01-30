@@ -840,6 +840,7 @@ var _ = Describe("Shoot defaulting", func() {
 				Expect(obj.Spec.Provider.Workers[1].SystemComponents).NotTo(BeNil())
 				Expect(worker.SystemComponents.Allow).To(BeTrue())
 				Expect(worker.MachineControllerManagerSettings).To(BeNil())
+				Expect(worker.AutoPreserveFailedMachineMax).To(PointTo(Equal(int32(0))))
 			}
 		})
 
@@ -855,6 +856,7 @@ var _ = Describe("Shoot defaulting", func() {
 			Expect(obj.Spec.Provider.Workers[0].UpdateStrategy).To(PointTo(Equal(AutoInPlaceUpdate)))
 			Expect(obj.Spec.Provider.Workers[0].MachineControllerManagerSettings).NotTo(BeNil())
 			Expect(obj.Spec.Provider.Workers[0].MachineControllerManagerSettings.DisableHealthTimeout).To(PointTo(BeTrue()))
+			Expect(obj.Spec.Provider.Workers[0].AutoPreserveFailedMachineMax).To(PointTo(Equal(int32(0))))
 
 			Expect(obj.Spec.Provider.Workers[1].MaxSurge).To(BeNil())
 			Expect(obj.Spec.Provider.Workers[1].MaxUnavailable).To(BeNil())
@@ -863,6 +865,7 @@ var _ = Describe("Shoot defaulting", func() {
 			Expect(obj.Spec.Provider.Workers[1].UpdateStrategy).To(PointTo(Equal(ManualInPlaceUpdate)))
 			Expect(obj.Spec.Provider.Workers[1].MachineControllerManagerSettings).NotTo(BeNil())
 			Expect(obj.Spec.Provider.Workers[1].MachineControllerManagerSettings.DisableHealthTimeout).To(PointTo(BeTrue()))
+			Expect(obj.Spec.Provider.Workers[1].AutoPreserveFailedMachineMax).To(PointTo(Equal(int32(0))))
 		})
 
 		It("should not overwrite the already set values for worker fields", func() {
@@ -873,7 +876,8 @@ var _ = Describe("Shoot defaulting", func() {
 					MaxUnavailable:                   ptr.To(intstr.FromInt32(1)),
 					SystemComponents:                 &WorkerSystemComponents{Allow: false},
 					UpdateStrategy:                   ptr.To(AutoInPlaceUpdate),
-					MachineControllerManagerSettings: &MachineControllerManagerSettings{DisableHealthTimeout: ptr.To(false)},
+					MachineControllerManagerSettings: &MachineControllerManagerSettings{DisableHealthTimeout: ptr.To(false), MachinePreserveTimeout: ptr.To(metav1.Duration{Duration: 2 * time.Hour})},
+					AutoPreserveFailedMachineMax:     ptr.To(int32(0)),
 				},
 				{
 					Name:                             "worker-2",
@@ -881,7 +885,8 @@ var _ = Describe("Shoot defaulting", func() {
 					MaxUnavailable:                   ptr.To(intstr.FromInt32(2)),
 					SystemComponents:                 &WorkerSystemComponents{Allow: false},
 					UpdateStrategy:                   ptr.To(ManualInPlaceUpdate),
-					MachineControllerManagerSettings: &MachineControllerManagerSettings{DisableHealthTimeout: ptr.To(false)},
+					MachineControllerManagerSettings: &MachineControllerManagerSettings{DisableHealthTimeout: ptr.To(false), MachinePreserveTimeout: ptr.To(metav1.Duration{Duration: 72 * time.Hour})},
+					AutoPreserveFailedMachineMax:     ptr.To(int32(0)),
 				},
 				{
 					Name:                             "worker-3",
@@ -889,7 +894,8 @@ var _ = Describe("Shoot defaulting", func() {
 					MaxUnavailable:                   ptr.To(intstr.FromInt32(2)),
 					SystemComponents:                 &WorkerSystemComponents{Allow: false},
 					UpdateStrategy:                   ptr.To(AutoRollingUpdate),
-					MachineControllerManagerSettings: &MachineControllerManagerSettings{DisableHealthTimeout: ptr.To(true)},
+					MachineControllerManagerSettings: &MachineControllerManagerSettings{DisableHealthTimeout: ptr.To(true), MachinePreserveTimeout: ptr.To(metav1.Duration{Duration: 72 * time.Hour})},
+					AutoPreserveFailedMachineMax:     ptr.To(int32(0)),
 				},
 			}
 
@@ -901,6 +907,8 @@ var _ = Describe("Shoot defaulting", func() {
 			Expect(obj.Spec.Provider.Workers[0].UpdateStrategy).To(PointTo(Equal(AutoInPlaceUpdate)))
 			Expect(obj.Spec.Provider.Workers[0].MachineControllerManagerSettings).NotTo(BeNil())
 			Expect(obj.Spec.Provider.Workers[0].MachineControllerManagerSettings.DisableHealthTimeout).To(PointTo(BeFalse()))
+			Expect(obj.Spec.Provider.Workers[0].MachineControllerManagerSettings.MachinePreserveTimeout).To(PointTo(Equal(metav1.Duration{Duration: 2 * time.Hour})))
+			Expect(obj.Spec.Provider.Workers[0].AutoPreserveFailedMachineMax).To(PointTo(Equal(int32(0))))
 
 			Expect(obj.Spec.Provider.Workers[1].MaxSurge).To(PointTo(Equal(intstr.FromInt32(0))))
 			Expect(obj.Spec.Provider.Workers[1].MaxUnavailable).To(PointTo(Equal(intstr.FromInt32(2))))
@@ -909,6 +917,8 @@ var _ = Describe("Shoot defaulting", func() {
 			Expect(obj.Spec.Provider.Workers[1].UpdateStrategy).To(PointTo(Equal(ManualInPlaceUpdate)))
 			Expect(obj.Spec.Provider.Workers[1].MachineControllerManagerSettings).NotTo(BeNil())
 			Expect(obj.Spec.Provider.Workers[1].MachineControllerManagerSettings.DisableHealthTimeout).To(PointTo(BeFalse()))
+			Expect(obj.Spec.Provider.Workers[1].MachineControllerManagerSettings.MachinePreserveTimeout).To(PointTo(Equal(metav1.Duration{Duration: 72 * time.Hour})))
+			Expect(obj.Spec.Provider.Workers[1].AutoPreserveFailedMachineMax).To(PointTo(Equal(int32(0))))
 
 			Expect(obj.Spec.Provider.Workers[2].MaxSurge).To(PointTo(Equal(intstr.FromInt32(1))))
 			Expect(obj.Spec.Provider.Workers[2].MaxUnavailable).To(PointTo(Equal(intstr.FromInt32(2))))
@@ -917,6 +927,8 @@ var _ = Describe("Shoot defaulting", func() {
 			Expect(obj.Spec.Provider.Workers[2].UpdateStrategy).To(PointTo(Equal(AutoRollingUpdate)))
 			Expect(obj.Spec.Provider.Workers[2].MachineControllerManagerSettings).NotTo(BeNil())
 			Expect(obj.Spec.Provider.Workers[2].MachineControllerManagerSettings.DisableHealthTimeout).To(PointTo(BeTrue()))
+			Expect(obj.Spec.Provider.Workers[2].MachineControllerManagerSettings.MachinePreserveTimeout).To(PointTo(Equal(metav1.Duration{Duration: 72 * time.Hour})))
+			Expect(obj.Spec.Provider.Workers[2].AutoPreserveFailedMachineMax).To(PointTo(Equal(int32(0))))
 		})
 	})
 

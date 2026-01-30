@@ -3851,6 +3851,18 @@ int32
 <p>Priority (or weight) is the importance by which this machine deployment will be scaled by cluster autoscaling.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>autoPreserveFailedMachineMax</code></br>
+<em>
+int32
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AutoPreserveFailedMachineMax is the maximum number of machines in the machine deployment that will be auto-preserved.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="extensions.gardener.cloud/v1alpha1.MachineImage">MachineImage
@@ -5087,6 +5099,18 @@ github.com/gardener/gardener/pkg/apis/core/v1beta1.MachineUpdateStrategy
 <td>
 <em>(Optional)</em>
 <p>UpdateStrategy specifies the machine update strategy for the worker pool.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>autoPreserveFailedMachineMax</code></br>
+<em>
+int32
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AutoPreserveFailedMachineMax is the maximum number of machines that will be auto-preserved in the worker pool. This value is distributed across zones much like Minimum and Maximum.</p>
 </td>
 </tr>
 </tbody>

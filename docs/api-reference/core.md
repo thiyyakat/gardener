@@ -8492,6 +8492,20 @@ bool
 This is intended to be used only for in-place updates.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>machinePreserveTimeout</code></br>
+<em>
+<a href="https://godoc.org/k8s.io/apimachinery/pkg/apis/meta/v1#Duration">
+Kubernetes meta/v1.Duration
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MachinePreserveTimeout is the timeout after which the machine preservation is stopped</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="core.gardener.cloud/v1beta1.MachineImage">MachineImage
@@ -15188,6 +15202,18 @@ WorkerControlPlane
 <em>(Optional)</em>
 <p>ControlPlane specifies that the shoot cluster control plane components should be running in this worker pool.
 This is only relevant for self-hosted shoot clusters.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>autoPreserveFailedMachineMax</code></br>
+<em>
+int32
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AutoPreserveFailedMachineMax is the maximum number of machines that will be auto-preserved in the worker pool. This value is distributed across zones like Minimum and Maximum.</p>
 </td>
 </tr>
 </tbody>

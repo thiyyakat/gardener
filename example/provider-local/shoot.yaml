@@ -27,6 +27,9 @@ spec:
       maximum: 2
       maxSurge: 1
       maxUnavailable: 0
+      autoPreserveFailedMachineMax: 1
+      machineControllerManager:
+        machinePreserveTimeout: 5m
   kubernetes:
     kubelet:
       seccompDefault: true
