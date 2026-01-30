@@ -86,6 +86,12 @@ spec:
                       description: Architecture is the CPU architecture of the worker
                         pool machines and machine image.
                       type: string
+                    autoPreserveFailedMachineMax:
+                      description: |-
+                        AutoPreserveFailedMachineMax is the maximum number of machines that can be auto-preserved in the worker pool.
+                        This value is distributed across zones like Minimum and Maximum.
+                      format: int32
+                      type: integer
                     clusterAutoscaler:
                       description: ClusterAutoscaler contains the cluster autoscaler
                         configurations for the worker pool.
@@ -528,6 +534,10 @@ spec:
                           description: MachineHealthTimeout is the period after which
                             machine is declared failed.
                           type: string
+                        machinePreserveTimeout:
+                          description: MachinePreserveTimeout is the timeout after
+                            which the machine preservation is stopped
+                          type: string
                         maxEvictRetries:
                           description: MaxEvictRetries are the number of eviction
                             retries on a pod after which drain is declared failed,
@@ -884,6 +894,11 @@ spec:
                 items:
                   description: MachineDeployment is a created machine deployment.
                   properties:
+                    autoPreserveFailedMachineMax:
+                      description: AutoPreserveFailedMachineMax is the maximum number
+                        of machines in the machine deployment that can be auto-preserved.
+                      format: int32
+                      type: integer
                     maximum:
                       description: Maximum is the maximum number for this machine
                         deployment.

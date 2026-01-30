@@ -8922,6 +8922,19 @@ var _ = Describe("Shoot Validation Tests", func() {
 				errList := ValidateWorker(worker, core.Kubernetes{Version: ""}, shootNamespace, providerType, fldPath, false)
 				Expect(errList).To(ConsistOf(field.Invalid(field.NewPath("workers[0].machineControllerManagerSettings.maxEvictRetries"), int64(-2), "must be greater than or equal to 0").WithOrigin("minimum")))
 			})
+
+			It("should forbid setting machinePreserveTimeout to negative value ", func() {
+				worker.MachineControllerManagerSettings = &core.MachineControllerManagerSettings{
+					MachinePreserveTimeout: &metav1.Duration{Duration: time.Minute * -2},
+				}
+
+				errList := ValidateWorker(worker, core.Kubernetes{Version: ""}, shootNamespace, providerType, fldPath, false)
+				Expect(errList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
+					"Type":   Equal(field.ErrorTypeInvalid),
+					"Field":  Equal("workers[0].machineControllerManagerSettings.machinePreserveTimeout"),
+					"Detail": Equal("must be non-negative"),
+				}))))
+			})
 		})
 		It("should fail when priority is set to value less than -1", func() {
 			worker := core.Worker{

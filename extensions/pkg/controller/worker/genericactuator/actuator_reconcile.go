@@ -259,6 +259,7 @@ func deployMachineDeployments(
 				Selector: &metav1.LabelSelector{
 					MatchLabels: labels,
 				},
+				AutoPreserveFailedMachineMax: deployment.AutoPreserveFailedMachineMax,
 				Template: machinev1alpha1.MachineTemplateSpec{
 					ObjectMeta: metav1.ObjectMeta{
 						Labels: getMachineLabels(deployment.Strategy, labels, worker.Name),
@@ -650,6 +651,9 @@ func ReadMachineConfiguration(pool extensionsv1alpha1.WorkerPool) *machinev1alph
 		}
 		if poolSettings.DisableHealthTimeout != nil {
 			machineConfiguration.DisableHealthTimeout = poolSettings.DisableHealthTimeout
+		}
+		if poolSettings.MachinePreserveTimeout != nil {
+			machineConfiguration.MachinePreserveTimeout = poolSettings.MachinePreserveTimeout
 		}
 	}
 	return machineConfiguration

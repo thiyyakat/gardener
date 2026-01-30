@@ -340,6 +340,10 @@ func SetDefaults_Worker(obj *Worker) {
 			Allow: DefaultWorkerSystemComponentsAllow,
 		}
 	}
+
+	if obj.AutoPreserveFailedMachineMax == nil {
+		obj.AutoPreserveFailedMachineMax = ptr.To(int32(0))
+	}
 }
 
 // SetDefaults_ClusterAutoscaler sets default values for ClusterAutoscaler object.
