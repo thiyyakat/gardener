@@ -288,3 +288,5 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
 )
+
+replace github.com/gardener/machine-controller-manager => github.com/thiyyakat/machine-controller-manager v0.0.0-20260203063942-6636d8618193
