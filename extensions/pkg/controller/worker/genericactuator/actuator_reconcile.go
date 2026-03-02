@@ -51,6 +51,10 @@ func (a *genericActuator) Reconcile(ctx context.Context, log logr.Logger, worker
 	// Generate the desired machine deployments.
 	log.Info("Generating machine deployments")
 	wantedMachineDeployments, err := workerDelegate.GenerateMachineDeployments(ctx)
+
+	for _, mcd := range wantedMachineDeployments {
+		log.Info("AutopreserveFailedMachineMax value for machine deployment", "machineDeploymentName", mcd.Name, "value", mcd.AutoPreserveFailedMachineMax)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to generate the machine deployments: %w", err)
 	}
@@ -91,6 +95,9 @@ func (a *genericActuator) Reconcile(ctx context.Context, log logr.Logger, worker
 	// update machineDeploymentsLastUpdateTime and the machine deployment slice in worker status
 	if err := a.updateWorkerStatusMachineDeployments(ctx, worker, wantedMachineDeployments); err != nil {
 		return fmt.Errorf("failed to update the machine deployments in worker status: %w", err)
+	}
+	for _, mcd := range wantedMachineDeployments {
+		log.Info("AutopreserveFailedMachineMax value for machine deployment - 2", "machineDeploymentName", mcd.Name, "value", mcd.AutoPreserveFailedMachineMax)
 	}
 
 	// Wait until all generated machine deployments are healthy/available.
@@ -287,7 +294,7 @@ func deployMachineDeployments(
 					metav1.SetMetaDataAnnotation(&machineDeployment.Spec.Template.ObjectMeta, k, v)
 				}
 			}
-
+			log.Info("TEST: AutoPreserveFailedMachineMax", "value", deployment.AutoPreserveFailedMachineMax)
 			log.Info("Deploying machine deployment", "machineDeploymentName", machineDeployment.Name, "replicas", machineDeployment.Spec.Replicas)
 			return nil
 		}); err != nil {
