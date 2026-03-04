@@ -39,6 +39,7 @@ var _ = Describe("Shoot Tests", Label("Shoot", "default"), func() {
 			pool1.Maximum = 2
 			pool1.MaxUnavailable = ptr.To(intstr.FromInt(1))
 			pool1.MaxSurge = ptr.To(intstr.FromInt(0))
+			pool1.AutoPreserveFailedMachineMax = ptr.To(int32(1))
 
 			pool2 := DefaultWorker("manual", ptr.To(gardencorev1beta1.ManualInPlaceUpdate))
 			pool2.Kubernetes = &gardencorev1beta1.WorkerKubernetes{
@@ -51,11 +52,13 @@ var _ = Describe("Shoot Tests", Label("Shoot", "default"), func() {
 					},
 				},
 			}
+			pool2.AutoPreserveFailedMachineMax = ptr.To(int32(1))
 
 			pool3 := pool1.DeepCopy()
 			pool3.Name = "auto-surge"
 			pool3.MaxSurge = ptr.To(intstr.FromInt(1))
 			pool3.MaxUnavailable = ptr.To(intstr.FromInt(0))
+			pool3.AutoPreserveFailedMachineMax = ptr.To(int32(1))
 
 			s.Shoot.Spec.Provider.Workers = []gardencorev1beta1.Worker{pool1, pool2, *pool3}
 

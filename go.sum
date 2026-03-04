@@ -257,8 +257,6 @@ github.com/gardener/dependency-watchdog v1.7.0 h1:oTAmbmXbPOT/LnxDZ0A0DO0W8GDYe9
 github.com/gardener/dependency-watchdog v1.7.0/go.mod h1:3nQlFmW17dWL+90KK3PPa52XSnpjnk5mOaC2Pev+VNo=
 github.com/gardener/etcd-druid/api v0.35.1 h1:hkd+5iV4xb7glnlo8rCqeXFIy9KmXF958x4une4cs6E=
 github.com/gardener/etcd-druid/api v0.35.1/go.mod h1:RwZzKp8K415AS0zg8VoODjBxYepCAUYyLgXnZc1bmbo=
-github.com/gardener/machine-controller-manager v0.61.2 h1:kG8DgmOqqlljWqxa4x0ER4+L5zg1lxNd1dQXT9gKbvA=
-github.com/gardener/machine-controller-manager v0.61.2/go.mod h1:8eE1qLztrWIbOM71mHSQGaC6Q+pl5lvOyN08qP39D7o=
 github.com/gardener/terminal-controller-manager v0.35.0 h1:LccE3ZT8KCZtdfMtyVtHuFIXwFnnBpIKE68aoDpgJss=
 github.com/gardener/terminal-controller-manager v0.35.0/go.mod h1:GJKKMxXs8Cu84TdJYwQrXCK30YShOZHCOliouEHEGqc=
 github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
@@ -707,6 +705,8 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/texttheater/golang-levenshtein v1.0.1 h1:+cRNoVrfiwufQPhoMzB6N0Yf/Mqajr6t1lOv8GyGE2U=
 github.com/texttheater/golang-levenshtein v1.0.1/go.mod h1:PYAKrbF5sAiq9wd+H82hs7gNaen0CplQ9uvm6+enD/8=
+github.com/thiyyakat/machine-controller-manager v0.0.0-20260312072138-aa9fb0c219b0 h1:1jiC8JjLSZk3wtq5Ic/+GIvn24gJQt4wT73Ir3Ip39k=
+github.com/thiyyakat/machine-controller-manager v0.0.0-20260312072138-aa9fb0c219b0/go.mod h1:8eE1qLztrWIbOM71mHSQGaC6Q+pl5lvOyN08qP39D7o=
 github.com/tidwall/gjson v1.18.0 h1:FIDeeyB800efLX89e5a8Y0BNH+LOngJyGrIWxG2FKQY=
 github.com/tidwall/gjson v1.18.0/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=

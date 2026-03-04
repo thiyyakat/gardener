@@ -25,8 +25,10 @@ spec:
         name: containerd
       minimum: 1
       maximum: 2
-      maxSurge: 1
-      maxUnavailable: 0
+      updateStrategy: ManualInPlaceUpdate
+      machineControllerManager:
+        machinePreserveTimeout: 72h
+      autoPreserveFailedMachineMax: 1
   kubernetes:
     kubelet:
       seccompDefault: true

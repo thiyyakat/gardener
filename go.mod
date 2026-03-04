@@ -338,3 +338,5 @@ require (
 )
 
 replace github.com/gardener/gardener/pkg/apis => ./pkg/apis
+
+replace github.com/gardener/machine-controller-manager => github.com/thiyyakat/machine-controller-manager v0.0.0-20260312072138-aa9fb0c219b0
