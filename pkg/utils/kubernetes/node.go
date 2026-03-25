@@ -7,6 +7,7 @@ package kubernetes
 import (
 	"strings"
 
+	machinev1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	kubeletapis "k8s.io/kubelet/pkg/apis"
 )
@@ -44,6 +45,16 @@ func isKubernetesLabelNamespace(namespace string) bool {
 	}
 	if namespace == "k8s.io" || strings.HasSuffix(namespace, ".k8s.io") {
 		return true
+	}
+	return false
+}
+
+// HasNodeCondition checks if the given node conditions contain a condition of the given type.
+func IsNodePreserved(nodeConditions []corev1.NodeCondition) bool {
+	for _, condition := range nodeConditions {
+		if condition.Type == machinev1alpha1.NodePreserved && condition.Status == corev1.ConditionTrue {
+			return true
+		}
 	}
 	return false
 }

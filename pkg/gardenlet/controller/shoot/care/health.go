@@ -7,6 +7,7 @@ package care
 import (
 	"context"
 	"fmt"
+	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
 	"strings"
 	"time"
 
@@ -672,6 +673,10 @@ func (h *Health) CheckClusterNodes(
 	nodesManagedByMCM := []*corev1.Node{}
 	for _, node := range nodeList.Items {
 		if metav1.HasAnnotation(node.ObjectMeta, annotationKeyNotManagedByMCM) && node.Annotations[annotationKeyNotManagedByMCM] == "1" {
+			continue
+		}
+		// Preserved nodes are skipped even if unhealthy, since such nodes have been intentionally preserved for diagnosing and/or debugging purposes.
+		if !kubernetesutils.IsNodePreserved(node.Status.Conditions) {
 			continue
 		}
 		nodesManagedByMCM = append(nodesManagedByMCM, &node)

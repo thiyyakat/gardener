@@ -130,7 +130,7 @@ images:
   - name: machine-controller-manager
     sourceRepository: github.com/gardener/machine-controller-manager
     repository: meghanat93/mcm
-    tag: 23Marchv1
+    tag: 25Marchv1
     labels:
       - name: gardener.cloud/cve-categorisation
         value:
