@@ -166,20 +166,21 @@ var kubeletConfigProblemRegex = regexp.MustCompile(`(?i)(KubeletHasInsufficientM
 func (h *HealthChecker) CheckNodes(condition gardencorev1beta1.Condition, nodes []corev1.Node, workerGroupName string, workerGroupKubernetesVersion *semver.Version) *gardencorev1beta1.Condition {
 	for _, object := range nodes {
 		// Preserved nodes are skipped even if unhealthy, since such nodes have been intentionally preserved for diagnosing and/or debugging purposes.
-		if !kubernetesutils.IsNodePreserved(object.Status.Conditions) {
-			if err := health.CheckNode(&object); err != nil {
-				var (
-					errorCodes []gardencorev1beta1.ErrorCode
-					message    = fmt.Sprintf("Node %q in worker group %q is unhealthy: %v", object.Name, workerGroupName, err)
-				)
+		if kubernetesutils.IsNodePreserved(object.Status.Conditions) {
+			continue
+		}
+		if err := health.CheckNode(&object); err != nil {
+			var (
+				errorCodes []gardencorev1beta1.ErrorCode
+				message    = fmt.Sprintf("Node %q in worker group %q is unhealthy: %v", object.Name, workerGroupName, err)
+			)
 
-				if kubeletConfigProblemRegex.MatchString(err.Error()) {
-					errorCodes = append(errorCodes, gardencorev1beta1.ErrorConfigurationProblem)
-				}
-
-				c := v1beta1helper.FailedCondition(h.clock, h.lastOperation, h.conditionThresholds, condition, "NodeUnhealthy", message, errorCodes...)
-				return &c
+			if kubeletConfigProblemRegex.MatchString(err.Error()) {
+				errorCodes = append(errorCodes, gardencorev1beta1.ErrorConfigurationProblem)
 			}
+
+			c := v1beta1helper.FailedCondition(h.clock, h.lastOperation, h.conditionThresholds, condition, "NodeUnhealthy", message, errorCodes...)
+			return &c
 		}
 
 		sameMajorMinor, err := semver.NewConstraint("~ " + object.Status.NodeInfo.KubeletVersion)

@@ -675,11 +675,6 @@ func (h *Health) CheckClusterNodes(
 		if metav1.HasAnnotation(node.ObjectMeta, annotationKeyNotManagedByMCM) && node.Annotations[annotationKeyNotManagedByMCM] == "1" {
 			continue
 		}
-		// Preserved nodes are skipped even if unhealthy, since such nodes have been intentionally preserved for diagnosing and/or debugging purposes.
-		if !kubernetesutils.IsNodePreserved(node.Status.Conditions) {
-			continue
-		}
-		nodesManagedByMCM = append(nodesManagedByMCM, &node)
 	}
 	if msg, err := CheckNodesScaling(ctx, h.seedClient.Client(), nodesManagedByMCM, machineDeploymentList, h.shoot.ControlPlaneNamespace); err != nil {
 		if msg == "" {
@@ -723,6 +718,10 @@ func CheckNodeAgentLeases(nodeList *corev1.NodeList, leaseList *coordinationv1.L
 	}
 
 	for _, node := range nodeList.Items {
+		// Preserved nodes are skipped even if unhealthy, since such nodes have been intentionally preserved for diagnosing and/or debugging purposes.
+		if kubernetesutils.IsNodePreserved(node.Status.Conditions) {
+			continue
+		}
 		lease, ok := nodeNameToLease[node.Name]
 		if !ok {
 			return fmt.Errorf("gardener-node-agent is not running on node %q", node.Name)
@@ -745,20 +744,30 @@ func CheckForExpiredNodeLeases(nodeList *corev1.NodeList, leaseList *coordinatio
 	}
 
 	nodeNames := sets.Set[string]{}
+	preservedNodeNames := sets.Set[string]{}
 	for _, node := range nodeList.Items {
+		if kubernetesutils.IsNodePreserved(node.Status.Conditions) {
+			preservedNodeNames.Insert(node.Name)
+		}
 		nodeNames.Insert(node.Name)
 	}
 
 	var expiredLeases int
+	var countPreservedNodesWithLeases int
 	for _, lease := range leaseList.Items {
-		// we only care about Leases related to existing nodes
-		if nodeNames.Has(lease.Name) &&
+		// we only care about Leases related to existing, unpreserved nodes
+		if preservedNodeNames.Has(lease.Name) {
+			countPreservedNodesWithLeases++
+		} else if nodeNames.Has(lease.Name) &&
 			lease.Spec.RenewTime.Add(time.Second*time.Duration(*lease.Spec.LeaseDurationSeconds)).Before(clock.Now()) {
 			expiredLeases++
 		}
 	}
+	if len(leaseList.Items)-countPreservedNodesWithLeases == 0 || len(nodeList.Items)-len(preservedNodeNames) == 0 {
+		return nil
+	}
 
-	if expiredLeasesPercentage := 100 * expiredLeases / len(leaseList.Items); expiredLeasesPercentage >= 20 {
+	if expiredLeasesPercentage := 100 * expiredLeases / (len(leaseList.Items) - countPreservedNodesWithLeases); expiredLeasesPercentage >= 20 {
 		return fmt.Errorf("%d%% of all Leases in %s namespace are expired - dependency-watchdog-prober might start scaling down controllers", expiredLeasesPercentage, corev1.NamespaceNodeLease)
 	}
 
@@ -771,9 +780,14 @@ func CheckNodesScaling(ctx context.Context, seedClient client.Client, nodeList [
 		readyAndSchedulableNodes int
 		registeredNodes          = len(nodeList)
 		desiredMachines          = getDesiredMachineCount(machineDeploymentList.Items)
+		preservedNodes           int
 	)
 
 	for _, node := range nodeList {
+		if kubernetesutils.IsNodePreserved(node.Status.Conditions) {
+			preservedNodes++
+			continue
+		}
 		if node.Spec.Unschedulable {
 			continue
 		}
@@ -786,7 +800,7 @@ func CheckNodesScaling(ctx context.Context, seedClient client.Client, nodeList [
 	}
 
 	// Skip checks if all shoot nodes are ready and match the target node number and if there are no ongoing node drains
-	if registeredNodes == desiredMachines && readyAndSchedulableNodes == desiredMachines {
+	if registeredNodes == desiredMachines && (readyAndSchedulableNodes+preservedNodes) == desiredMachines {
 		return "", nil
 	}
 
@@ -821,13 +835,13 @@ func CheckNodesScaling(ctx context.Context, seedClient client.Client, nodeList [
 
 	if checkRollingUpdate {
 		// Use the checkNodesScalingUp function since it checks for machines that may be stuck in the pending state, which can happen when rolling out critical components that are stuck.
-		if err := checkNodesScalingUp(machineList, readyAndSchedulableNodes, desiredMachines); err != nil {
+		if err := checkNodesScalingUp(machineList, readyAndSchedulableNodes, preservedNodes, desiredMachines); err != nil {
 			return "NodesRollOutScalingUp", err
 		}
 	}
 
 	if checkScaleUp {
-		if err := checkNodesScalingUp(machineList, readyAndSchedulableNodes, desiredMachines); err != nil {
+		if err := checkNodesScalingUp(machineList, readyAndSchedulableNodes, preservedNodes, desiredMachines); err != nil {
 			return "NodesScalingUp", err
 		}
 	}
@@ -839,8 +853,8 @@ func CheckNodesScaling(ctx context.Context, seedClient client.Client, nodeList [
 	return "", nil
 }
 
-func checkNodesScalingUp(machineList *machinev1alpha1.MachineList, readyNodes, desiredMachines int) error {
-	if readyNodes == desiredMachines {
+func checkNodesScalingUp(machineList *machinev1alpha1.MachineList, readyNodes, preservedNodes, desiredMachines int) error {
+	if readyNodes+preservedNodes == desiredMachines {
 		return nil
 	}
 
@@ -850,6 +864,10 @@ func checkNodesScalingUp(machineList *machinev1alpha1.MachineList, readyNodes, d
 
 	var pendingMachines, erroneousMachines int
 	for _, machine := range machineList.Items {
+		// Preserved machines might be in an undesired phase, but since they are preserved intentionally, we should not count them as erroneous or pending.
+		if !machine.Status.CurrentStatus.PreserveExpiryTime.IsZero() {
+			continue
+		}
 		switch machine.Status.CurrentStatus.Phase {
 		case machinev1alpha1.MachineRunning, machinev1alpha1.MachineAvailable:
 			// machine is already running fine
@@ -889,6 +907,10 @@ func checkNodesScalingDown(machineList *machinev1alpha1.MachineList, nodeList []
 
 	var cordonedNodes int
 	for _, node := range nodeList {
+		// preserved failed nodes do not have deletion timestamps, however, they will be cordoned.
+		if kubernetesutils.IsNodePreserved(node.Status.Conditions) {
+			continue
+		}
 		if node.Spec.Unschedulable {
 			machine, ok := nodeNameToMachine[node.Name]
 			if !ok {
