@@ -447,14 +447,13 @@ func (a *genericActuator) waitUntilWantedMachineDeploymentsAvailable(ctx context
 				msg += fmt.Sprintf("Waiting until %d old machines are updated...", numOldMachinesNotUpdateCandidateManualInPlace)
 				break
 			}
-			if numUnavailable > numPreservedFailed {
-				msg = fmt.Sprintf("Waiting until machines are available (%d/%d desired machine(s) available, %d/%d machine(s) updated, %d machine(s) pending, %d preserved failed machine(s), %d/%d machinedeployments available)...",
-					numAvailable, numDesired, numUpdated+numNeedUpdateManualInPlace, numDesired, numUnavailable, numPreservedFailed, numHealthyDeployments, len(wantedMachineDeployments))
-			} else {
+			if numUnavailable <= numPreservedFailed {
 				// if the number of unavailable machines is not greater than the number of preserved failed machines, it means that all unavailable machines are preserved failed machines,
 				// hence we can exempt them from this check and allow shoot reconciliation to progress
 				return retryutils.Ok()
 			}
+			msg = fmt.Sprintf("Waiting until machines are available (%d/%d desired machine(s) available, %d/%d machine(s) updated, %d machine(s) pending, %d preserved failed machine(s), %d/%d machinedeployments available)...",
+				numAvailable, numDesired, numUpdated+numNeedUpdateManualInPlace, numDesired, numUnavailable, numPreservedFailed, numHealthyDeployments, len(wantedMachineDeployments))
 
 		default:
 			if numberOfAwakeMachines == 0 {
