@@ -2231,6 +2231,9 @@ func ValidateWorker(worker core.Worker, kubernetes core.Kubernetes, shootNamespa
 	if worker.AutoPreserveFailedMachineMax != nil && *worker.AutoPreserveFailedMachineMax < 0 {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("autoPreserveFailedMachineMax"), *worker.AutoPreserveFailedMachineMax, "cannot be less than 0"))
 	}
+	if *worker.AutoPreserveFailedMachineMax > worker.Maximum {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("autoPreserveFailedMachineMax"), *worker.AutoPreserveFailedMachineMax, "cannot be greater than maximum value"))
+	}
 
 	if ptr.Deref(worker.UpdateStrategy, "") == core.ManualInPlaceUpdate {
 		if worker.MaxSurge != nil {

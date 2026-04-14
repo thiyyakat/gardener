@@ -285,5 +285,5 @@ type MachineDeployment struct {
 	Priority *int32 `json:"priority,omitempty"`
 	// AutoPreserveFailedMachineMax is the maximum number of machines in the machine deployment that can be auto-preserved.
 	// +optional
-	AutoPreserveFailedMachineMax int32 `json:"autoPreserveFailedMachineMax,omitempty"`
+	AutoPreserveFailedMachineMax *int32 `json:"autoPreserveFailedMachineMax,omitempty"`
 }
