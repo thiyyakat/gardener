@@ -2155,6 +2155,8 @@ const (
 	ShootEveryNodeReady ConditionType = "EveryNodeReady"
 	// ShootSystemComponentsHealthy is a constant for a condition type indicating the system components health.
 	ShootSystemComponentsHealthy ConditionType = "SystemComponentsHealthy"
+	// ShootNoPreservedFailedMachines is a constant for a condition type indicating whether the Shoot has preserved failed machines
+	ShootNoPreservedFailedMachines ConditionType = "NoPreservedFailedMachines"
 	// ShootHibernationPossible is a constant for a condition type indicating whether the Shoot can be hibernated.
 	ShootHibernationPossible ConditionType = "HibernationPossible"
 	// ShootMaintenancePreconditionsSatisfied is a constant for a condition type indicating whether all preconditions

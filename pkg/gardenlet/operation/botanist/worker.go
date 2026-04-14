@@ -140,7 +140,7 @@ func OperatingSystemConfigUpdatedForAllWorkerPools(
 				continue
 			}
 
-			// Skip nodes belonging to preserved  machines - these nodes may not get their OSC
+			// Skip nodes belonging to preserved machines - these nodes may not get their OSC
 			// updated for an extended period of time and should not block shoot reconciliation.
 			if isNodePreservedAndNotReady(node) {
 				continue
@@ -165,7 +165,7 @@ func isNodePreservedAndNotReady(node corev1.Node) bool {
 	for _, condition := range node.Status.Conditions {
 		if condition.Type == v1alpha1.NodePreserved && condition.Status == corev1.ConditionTrue {
 			isPreserved = true
-		} else if condition.Type == corev1.NodeReady && condition.Status == corev1.ConditionFalse || condition.Status == corev1.ConditionUnknown {
+		} else if condition.Type == corev1.NodeReady && (condition.Status == corev1.ConditionFalse || condition.Status == corev1.ConditionUnknown) {
 			isNotReady = true
 		}
 		if isPreserved && isNotReady {
