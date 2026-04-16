@@ -594,7 +594,6 @@ func (h *Health) checkWorkers(
 	extensionConditions []healthchecker.ExtensionCondition,
 	healthCheckOutdatedThreshold *metav1.Duration,
 ) (*gardencorev1beta1.Condition, error) {
-
 	machineDeploymentList := &machinev1alpha1.MachineDeploymentList{}
 	if err := h.seedClient.Client().List(ctx, machineDeploymentList, client.InNamespace(h.shoot.ControlPlaneNamespace)); err != nil {
 		return nil, err
