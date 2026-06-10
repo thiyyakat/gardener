@@ -1,11 +1,12 @@
 module github.com/gardener/gardener
 
-go 1.25.9
+go 1.26.2
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/VictoriaMetrics/operator/api v0.66.1
+
 	github.com/andybalholm/brotli v1.2.1
 	github.com/bramvdbogaerde/go-scp v1.6.0
 	github.com/containerd/containerd/v2 v2.2.3
@@ -19,11 +20,11 @@ require (
 	github.com/elliotchance/orderedmap/v3 v3.1.0
 	github.com/fatih/color v1.19.0
 	github.com/fluent/fluent-operator/v3 v3.7.0
-	github.com/gardener/cert-management v0.22.0
-	github.com/gardener/dependency-watchdog v1.7.0
-	github.com/gardener/etcd-druid/api v0.36.3
-	github.com/gardener/machine-controller-manager v0.61.3
-	github.com/gardener/terminal-controller-manager v0.35.0
+	github.com/gardener/cert-management v0.23.0
+	github.com/gardener/dependency-watchdog v1.8.0
+	github.com/gardener/etcd-druid/api v0.36.4
+	github.com/gardener/machine-controller-manager v0.62.0
+	github.com/gardener/terminal-controller-manager v0.36.0
 	github.com/go-jose/go-jose/v4 v4.1.4
 	github.com/go-logr/logr v1.4.3
 	github.com/go-test/deep v1.1.0
