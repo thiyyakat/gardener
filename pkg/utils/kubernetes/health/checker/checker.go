@@ -203,7 +203,7 @@ func (h *HealthChecker) CheckNodes(condition gardencorev1beta1.Condition, nodes 
 			continue
 		}
 
-		sameMajorMinor, err := semver.NewConstraint("~ " + object.Status.NodeInfo.KubeletVersion)
+		sameMajorMinor, err := semver.NewConstraint("~ " + node.Status.NodeInfo.KubeletVersion)
 		if err != nil {
 			message := fmt.Sprintf("Error checking for same major minor Kubernetes version for node %q: %+v", node.Name, err) + messageSuffix
 			c := v1beta1helper.FailedCondition(h.clock, h.lastOperation, h.conditionThresholds, condition, "VersionParseError", message)
@@ -214,7 +214,7 @@ func (h *HealthChecker) CheckNodes(condition gardencorev1beta1.Condition, nodes 
 		}
 
 		if sameMajorMinor.Check(workerGroupKubernetesVersion) {
-			equal, err := semver.NewConstraint("= " + object.Status.NodeInfo.KubeletVersion)
+			equal, err := semver.NewConstraint("= " + node.Status.NodeInfo.KubeletVersion)
 			if err != nil {
 				message := fmt.Sprintf("Error checking for equal Kubernetes versions for node %q: %+v", node.Name, err) + messageSuffix
 				c := v1beta1helper.FailedCondition(h.clock, h.lastOperation, h.conditionThresholds, condition, "VersionParseError", message)

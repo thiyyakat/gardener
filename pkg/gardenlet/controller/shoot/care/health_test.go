@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"maps"
 	"net/http"
 	"strings"
 	"time"
@@ -590,7 +589,7 @@ var _ = Describe("health check", func() {
 					},
 				},
 				int32(2),
-				[]coordinationv1.Lease{},
+				nil,
 				PointTo(And(
 					beConditionWithStatus(gardencorev1beta1.ConditionFalse),
 					WithReason("NodeUnhealthy"),
