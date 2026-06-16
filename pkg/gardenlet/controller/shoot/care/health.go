@@ -793,19 +793,24 @@ func (h *Health) CheckClusterNodes(
 	}
 
 	nodeList := convertWorkerPoolToNodesMappingToNodeList(workerPoolToNodes)
-	// Only nodes managed by MCM and not belonging to preserved failed machines are considered for
-	// lease, systemd-unit, and node-scaling checks.
-	nodesManagedByMCM := []*corev1.Node{}
+	// unpreservedNodesManagedByMCM: MCM-managed, non-preserved — used for lease and systemd-unit checks.
+	// nodesForScalingCheck: MCM-managed including preserved — used for node-scaling checks so that
+	// checkNodesScalingDown can correctly account for cordoned-preserved nodes.
+	// nodesForExpiredLeaseCheck: all non-preserved nodes — used for expired-lease check.
+	unpreservedNodesManagedByMCM := []*corev1.Node{}
 	nodesForExpiredLeaseCheck := corev1.NodeList{}
+	nodesForScalingCheck := []*corev1.Node{}
 	for _, node := range nodeList.Items {
-		if preservedNodeNames.Has(node.Name) {
-			continue
+		if !preservedNodeNames.Has(node.Name) {
+			nodesForExpiredLeaseCheck.Items = append(nodesForExpiredLeaseCheck.Items, node)
 		}
-		nodesForExpiredLeaseCheck.Items = append(nodesForExpiredLeaseCheck.Items, node)
 		if metav1.HasAnnotation(node.ObjectMeta, annotationKeyNotManagedByMCM) && node.Annotations[annotationKeyNotManagedByMCM] == "1" {
 			continue
 		}
-		nodesManagedByMCM = append(nodesManagedByMCM, &node)
+		if !preservedNodeNames.Has(node.Name) {
+			unpreservedNodesManagedByMCM = append(unpreservedNodesManagedByMCM, &node)
+		}
+		nodesForScalingCheck = append(nodesForScalingCheck, &node)
 	}
 
 	leaseList := &coordinationv1.LeaseList{}
@@ -813,11 +818,11 @@ func (h *Health) CheckClusterNodes(
 		return nil, err
 	}
 
-	if err := CheckNodeAgentLeases(nodesManagedByMCM, leaseList, h.clock); err != nil {
+	if err := CheckNodeAgentLeases(unpreservedNodesManagedByMCM, leaseList, h.clock); err != nil {
 		return new(v1beta1helper.FailedCondition(h.clock, h.shoot.GetInfo().Status.LastOperation, h.conditionThresholds, everyNodeReadyCondition, "NodeAgentUnhealthy", err.Error())), nil
 	}
 
-	if err := CheckSystemdUnitsReady(nodesManagedByMCM); err != nil {
+	if err := CheckSystemdUnitsReady(unpreservedNodesManagedByMCM); err != nil {
 		return new(v1beta1helper.FailedCondition(h.clock, h.shoot.GetInfo().Status.LastOperation, h.conditionThresholds, everyNodeReadyCondition, "SystemdUnitsNotReady", err.Error())), nil
 	}
 
@@ -827,7 +832,7 @@ func (h *Health) CheckClusterNodes(
 			return nil, err
 		}
 
-		if msg, err := CheckNodesScaling(ctx, h.seedClient.Client(), nodesManagedByMCM, machineDeploymentList, h.shoot.ControlPlaneNamespace); err != nil {
+		if msg, err := CheckNodesScaling(ctx, h.seedClient.Client(), nodesForScalingCheck, machineDeploymentList, h.shoot.ControlPlaneNamespace); err != nil {
 			if msg == "" {
 				return nil, err
 			}
@@ -1007,6 +1012,9 @@ func checkNodesScalingUp(machineList *machinev1alpha1.MachineList, readyNodes, d
 
 	var pendingMachines, erroneousMachines int
 	for _, machine := range machineList.Items {
+		if machine.Status.CurrentStatus.PreserveExpiryTime != nil {
+			continue
+		}
 		switch machine.Status.CurrentStatus.Phase {
 		case machinev1alpha1.MachineRunning, machinev1alpha1.MachineAvailable:
 			// machine is already running fine
@@ -1016,7 +1024,9 @@ func checkNodesScalingUp(machineList *machinev1alpha1.MachineList, readyNodes, d
 			pendingMachines++
 		default:
 			// undesired machine phase
-			erroneousMachines++
+			if machine.Status.CurrentStatus.PreserveExpiryTime == nil {
+				erroneousMachines++
+			}
 		}
 	}
 
@@ -1030,7 +1040,7 @@ func checkNodesScalingUp(machineList *machinev1alpha1.MachineList, readyNodes, d
 	return fmt.Errorf("%s provisioning and should join the cluster soon", cosmeticMachineMessage(pendingMachines))
 }
 
-func checkNodesScalingDown(machineList *machinev1alpha1.MachineList, nodeList []*corev1.Node, registeredNodes, desiredMachines int) error {
+func checkNodesScalingDown(machineList *machinev1alpha1.MachineList, unpreservedNodeList []*corev1.Node, registeredNodes, desiredMachines int) error {
 	if registeredNodes == desiredMachines {
 		return nil
 	}
@@ -1045,7 +1055,7 @@ func checkNodesScalingDown(machineList *machinev1alpha1.MachineList, nodeList []
 	}
 
 	var cordonedNodes, cordonedPreservedNodes int
-	for _, node := range nodeList {
+	for _, node := range unpreservedNodeList {
 		if node.Spec.Unschedulable {
 			machine, ok := nodeNameToMachine[node.Name]
 			if !ok {
