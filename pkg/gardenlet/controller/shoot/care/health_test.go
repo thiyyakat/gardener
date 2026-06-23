@@ -1817,8 +1817,8 @@ var _ = Describe("health check", func() {
 					OfType("ControlPlaneHealthy"),
 					OfType("ObservabilityComponentsHealthy"),
 					OfType("EveryNodeReady"),
-					OfType("NoPreservedFailedMachines"),
 					OfType("SystemComponentsHealthy"),
+					OfType("NoPreservedFailedMachines"),
 				))
 			})
 
