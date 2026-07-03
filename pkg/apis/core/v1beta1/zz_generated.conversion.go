@@ -5239,6 +5239,7 @@ func autoConvert_v1beta1_MachineControllerManagerSettings_To_core_MachineControl
 	out.MachineInPlaceUpdateTimeout = (*metav1.Duration)(unsafe.Pointer(in.MachineInPlaceUpdateTimeout))
 	out.DisableHealthTimeout = (*bool)(unsafe.Pointer(in.DisableHealthTimeout))
 	out.MachinePreserveTimeout = (*metav1.Duration)(unsafe.Pointer(in.MachinePreserveTimeout))
+	out.AutoPreserveFailedMachineMax = (*int32)(unsafe.Pointer(in.AutoPreserveFailedMachineMax))
 	return nil
 }
 
@@ -5256,6 +5257,7 @@ func autoConvert_core_MachineControllerManagerSettings_To_v1beta1_MachineControl
 	out.MachineInPlaceUpdateTimeout = (*metav1.Duration)(unsafe.Pointer(in.MachineInPlaceUpdateTimeout))
 	out.DisableHealthTimeout = (*bool)(unsafe.Pointer(in.DisableHealthTimeout))
 	out.MachinePreserveTimeout = (*metav1.Duration)(unsafe.Pointer(in.MachinePreserveTimeout))
+	out.AutoPreserveFailedMachineMax = (*int32)(unsafe.Pointer(in.AutoPreserveFailedMachineMax))
 	return nil
 }
 
@@ -7962,7 +7964,6 @@ func autoConvert_v1beta1_Worker_To_core_Worker(in *Worker, out *core.Worker, s c
 	out.Priority = (*int32)(unsafe.Pointer(in.Priority))
 	out.UpdateStrategy = (*core.MachineUpdateStrategy)(unsafe.Pointer(in.UpdateStrategy))
 	out.ControlPlane = (*core.WorkerControlPlane)(unsafe.Pointer(in.ControlPlane))
-	out.AutoPreserveFailedMachineMax = (*int32)(unsafe.Pointer(in.AutoPreserveFailedMachineMax))
 	return nil
 }
 
@@ -8006,7 +8007,6 @@ func autoConvert_core_Worker_To_v1beta1_Worker(in *core.Worker, out *Worker, s c
 	out.Priority = (*int32)(unsafe.Pointer(in.Priority))
 	out.UpdateStrategy = (*MachineUpdateStrategy)(unsafe.Pointer(in.UpdateStrategy))
 	out.ControlPlane = (*WorkerControlPlane)(unsafe.Pointer(in.ControlPlane))
-	out.AutoPreserveFailedMachineMax = (*int32)(unsafe.Pointer(in.AutoPreserveFailedMachineMax))
 	return nil
 }
 

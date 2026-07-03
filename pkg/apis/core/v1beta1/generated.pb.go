@@ -6902,6 +6902,11 @@ func (m *MachineControllerManagerSettings) MarshalToSizedBuffer(dAtA []byte) (in
 	_ = i
 	var l int
 	_ = l
+	if m.AutoPreserveFailedMachineMax != nil {
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.AutoPreserveFailedMachineMax))
+		i--
+		dAtA[i] = 0x48
+	}
 	if m.MachinePreserveTimeout != nil {
 		{
 			size, err := m.MachinePreserveTimeout.MarshalToSizedBuffer(dAtA[:i])
@@ -13061,13 +13066,6 @@ func (m *Worker) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.AutoPreserveFailedMachineMax != nil {
-		i = encodeVarintGenerated(dAtA, i, uint64(*m.AutoPreserveFailedMachineMax))
-		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0xc8
-	}
 	if m.ControlPlane != nil {
 		{
 			size, err := m.ControlPlane.MarshalToSizedBuffer(dAtA[:i])
@@ -15973,6 +15971,9 @@ func (m *MachineControllerManagerSettings) Size() (n int) {
 		l = m.MachinePreserveTimeout.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.AutoPreserveFailedMachineMax != nil {
+		n += 1 + sovGenerated(uint64(*m.AutoPreserveFailedMachineMax))
+	}
 	return n
 }
 
@@ -18334,9 +18335,6 @@ func (m *Worker) Size() (n int) {
 		l = m.ControlPlane.Size()
 		n += 2 + l + sovGenerated(uint64(l))
 	}
-	if m.AutoPreserveFailedMachineMax != nil {
-		n += 2 + sovGenerated(uint64(*m.AutoPreserveFailedMachineMax))
-	}
 	return n
 }
 
@@ -20030,6 +20028,7 @@ func (this *MachineControllerManagerSettings) String() string {
 		`MachineInPlaceUpdateTimeout:` + strings.Replace(fmt.Sprintf("%v", this.MachineInPlaceUpdateTimeout), "Duration", "v11.Duration", 1) + `,`,
 		`DisableHealthTimeout:` + valueToStringGenerated(this.DisableHealthTimeout) + `,`,
 		`MachinePreserveTimeout:` + strings.Replace(fmt.Sprintf("%v", this.MachinePreserveTimeout), "Duration", "v11.Duration", 1) + `,`,
+		`AutoPreserveFailedMachineMax:` + valueToStringGenerated(this.AutoPreserveFailedMachineMax) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -21731,7 +21730,6 @@ func (this *Worker) String() string {
 		`Priority:` + valueToStringGenerated(this.Priority) + `,`,
 		`UpdateStrategy:` + valueToStringGenerated(this.UpdateStrategy) + `,`,
 		`ControlPlane:` + strings.Replace(this.ControlPlane.String(), "WorkerControlPlane", "WorkerControlPlane", 1) + `,`,
-		`AutoPreserveFailedMachineMax:` + valueToStringGenerated(this.AutoPreserveFailedMachineMax) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -40598,6 +40596,26 @@ func (m *MachineControllerManagerSettings) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AutoPreserveFailedMachineMax", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.AutoPreserveFailedMachineMax = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -59470,26 +59488,6 @@ func (m *Worker) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 25:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AutoPreserveFailedMachineMax", wireType)
-			}
-			var v int32
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.AutoPreserveFailedMachineMax = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])

@@ -6126,6 +6126,13 @@ func schema_pkg_apis_core_v1beta1_MachineControllerManagerSettings(ref common.Re
 							Ref:         ref(metav1.Duration{}.OpenAPIModelName()),
 						},
 					},
+					"autoPreserveFailedMachineMax": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AutoPreserveFailedMachineMax is the maximum number of machines that can be auto-preserved by MCM for the worker pool. This value is distributed across zones like Minimum and Maximum.",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 				},
 			},
 		},
@@ -11214,13 +11221,6 @@ func schema_pkg_apis_core_v1beta1_Worker(ref common.ReferenceCallback) common.Op
 						SchemaProps: spec.SchemaProps{
 							Description: "ControlPlane specifies that the shoot cluster control plane components should be running in this worker pool. This is only relevant for self-hosted shoot clusters.",
 							Ref:         ref(v1beta1.WorkerControlPlane{}.OpenAPIModelName()),
-						},
-					},
-					"autoPreserveFailedMachineMax": {
-						SchemaProps: spec.SchemaProps{
-							Description: "AutoPreserveFailedMachineMax is the maximum number of machines that can be auto-preserved by MCM for the worker pool. This value is distributed across zones like Minimum and Maximum.",
-							Type:        []string{"integer"},
-							Format:      "int32",
 						},
 					},
 				},
