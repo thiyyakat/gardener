@@ -522,7 +522,7 @@ var _ = Describe("health check", func() {
 				[]gardencorev1beta1.Worker{{Name: workerPoolName1, Maximum: 10, Minimum: 1}},
 				map[string]metav1.ObjectMeta{
 					workerPoolName1: {
-						Name:        operatingsystemconfig.Key(kubernetesVersion, nil, &gardencorev1beta1.Worker{Name: workerPoolName1}, false, nil, nil),
+						Name:        operatingsystemconfig.KeyV1(workerPoolName1, kubernetesVersion, nil),
 						Annotations: map[string]string{"checksum/data-script": cloudConfigSecretChecksum1},
 						Labels:      map[string]string{"worker.gardener.cloud/pool": workerPoolName1},
 					},
@@ -568,7 +568,7 @@ var _ = Describe("health check", func() {
 				[]gardencorev1beta1.Worker{{Name: workerPoolName1, Maximum: 10, Minimum: 2}},
 				map[string]metav1.ObjectMeta{
 					workerPoolName1: {
-						Name:        operatingsystemconfig.Key(kubernetesVersion, nil, &gardencorev1beta1.Worker{Name: workerPoolName1}, false, nil, nil),
+						Name:        operatingsystemconfig.KeyV1(workerPoolName1, kubernetesVersion, nil),
 						Annotations: map[string]string{"checksum/data-script": cloudConfigSecretChecksum1},
 						Labels:      map[string]string{"worker.gardener.cloud/pool": workerPoolName1},
 					},
@@ -906,7 +906,11 @@ var _ = Describe("health check", func() {
 
 		Describe("Scaling down", func() {
 			It("should return true if number of registered nodes equal number of desired machines", func() {
-				nodeList := []*corev1.Node{{}}
+				nodeList := []*corev1.Node{{
+					Status: corev1.NodeStatus{
+						Conditions: []corev1.NodeCondition{{Type: corev1.NodeReady, Status: corev1.ConditionTrue}},
+					},
+				}}
 				machineDeploymentList := &machinev1alpha1.MachineDeploymentList{
 					Items: []machinev1alpha1.MachineDeployment{
 						{
