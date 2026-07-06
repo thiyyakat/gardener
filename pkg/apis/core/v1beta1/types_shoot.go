@@ -2154,6 +2154,9 @@ const (
 	ShootUsesUnifiedHTTPProxyPort ConditionType = "UsesUnifiedHTTPProxyPort"
 	// ShootHasPreservedFailedMachines is a constant for a condition type indicating that the Shoot cluster has preserved failed machines.
 	ShootHasPreservedFailedMachines ConditionType = "HasPreservedFailedMachines"
+	// ShootHasIgnoredManagedResources is a constant for a condition type indicating that one or more ManagedResources
+	// in the Shoot cluster are ignored.
+	ShootHasIgnoredManagedResources ConditionType = "HasIgnoredManagedResources"
 	// ShootLiveMigrationSourceEtcdPreparedForPeerJoin indicates that the source etcd cluster
 	// is prepared for destination peers to join.
 	ShootLiveMigrationSourceEtcdPreparedForPeerJoin ConditionType = "SourceEtcdPreparedForPeerJoin"

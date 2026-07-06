@@ -1014,7 +1014,6 @@ func CheckNodesScaling(ctx context.Context, seedClient client.Client, nodeList [
 			return "NodesScalingDown", err
 		}
 	}
-	}
 
 	return "", nil
 }
